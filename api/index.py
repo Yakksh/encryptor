@@ -1,16 +1,61 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 from cryptography.fernet import Fernet
+from functools import wraps
 import json
 
 app = Flask(__name__)
-CORS(app)  # Enable CORS for all routes
+
+# Rate limiting
+limiter = Limiter(
+    app,
+    key_func=get_remote_address,
+    default_limits=["200 per day", "50 per hour"]
+)
+
+# Secure CORS - only allow requests from your GitHub Pages domain
+CORS(app, origins=[
+    "https://yakksh.github.io",
+    "http://localhost:3000",  # For local development
+    "http://127.0.0.1:3000"   # Alternative local development
+])
+
+# Allowed origins for additional security checks
+ALLOWED_ORIGINS = [
+    "https://yakksh.github.io",
+    "http://localhost:3000",
+    "http://127.0.0.1:3000"
+]
+
+def verify_origin(f):
+    """Decorator to verify request origin"""
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        origin = request.headers.get('Origin')
+        referer = request.headers.get('Referer')
+
+        # Check if request is from allowed origin
+        if origin:
+            if not any(origin.startswith(allowed) for allowed in ALLOWED_ORIGINS):
+                return jsonify({"detail": "Unauthorized origin"}), 403
+
+        # Additional check using referer for extra security
+        if referer:
+            if not any(referer.startswith(allowed) for allowed in ALLOWED_ORIGINS):
+                return jsonify({"detail": "Unauthorized referer"}), 403
+
+        return f(*args, **kwargs)
+    return decorated_function
 
 @app.route('/')
 def root():
     return jsonify({"message": "Fernet Encryptor API is running"})
 
 @app.route('/generate-key', methods=['POST'])
+@limiter.limit("10 per minute")
+@verify_origin
 def generate_key():
     try:
         key = Fernet.generate_key()
@@ -19,9 +64,14 @@ def generate_key():
         return jsonify({"detail": f"Error generating key: {str(e)}"}), 500
 
 @app.route('/encrypt', methods=['POST'])
+@limiter.limit("20 per minute")
+@verify_origin
 def encrypt_message():
     try:
         data = request.get_json()
+        if not data:
+            return jsonify({"detail": "No JSON data provided"}), 400
+
         message = data.get('message')
         key_input = data.get('key')
 
@@ -50,9 +100,14 @@ def encrypt_message():
         return jsonify({"detail": f"Error encrypting message: {str(e)}"}), 500
 
 @app.route('/decrypt', methods=['POST'])
+@limiter.limit("20 per minute")
+@verify_origin
 def decrypt_message():
     try:
         data = request.get_json()
+        if not data:
+            return jsonify({"detail": "No JSON data provided"}), 400
+
         encrypted_message = data.get('encrypted_message')
         key_input = data.get('key')
 
