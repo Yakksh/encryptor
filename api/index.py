@@ -1,105 +1,82 @@
-from fastapi import FastAPI, HTTPException
-from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
+from flask import Flask, request, jsonify
+from flask_cors import CORS
 from cryptography.fernet import Fernet
-from mangum import Mangum
-import base64
-import os
-from typing import Optional
+import json
 
-app = FastAPI(title="Fernet Encryptor API", version="1.0.0")
+app = Flask(__name__)
+CORS(app)  # Enable CORS for all routes
 
-# Configure CORS to allow requests from GitHub Pages
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],  # In production, specify your GitHub Pages domain
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+@app.route('/')
+def root():
+    return jsonify({"message": "Fernet Encryptor API is running"})
 
-class EncryptRequest(BaseModel):
-    message: str
-    key: Optional[str] = None
-
-class DecryptRequest(BaseModel):
-    encrypted_message: str
-    key: str
-
-class KeyResponse(BaseModel):
-    key: str
-
-class EncryptResponse(BaseModel):
-    encrypted_message: str
-    key: str
-
-class DecryptResponse(BaseModel):
-    decrypted_message: str
-
-@app.get("/")
-async def root():
-    return {"message": "Fernet Encryptor API is running"}
-
-@app.post("/generate-key", response_model=KeyResponse)
-async def generate_key():
-    """Generate a new Fernet encryption key"""
+@app.route('/generate-key', methods=['POST'])
+def generate_key():
     try:
         key = Fernet.generate_key()
-        return KeyResponse(key=key.decode())
+        return jsonify({"key": key.decode()})
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error generating key: {str(e)}")
+        return jsonify({"detail": f"Error generating key: {str(e)}"}), 500
 
-@app.post("/encrypt", response_model=EncryptResponse)
-async def encrypt_message(request: EncryptRequest):
-    """Encrypt a message using Fernet encryption"""
+@app.route('/encrypt', methods=['POST'])
+def encrypt_message():
     try:
+        data = request.get_json()
+        message = data.get('message')
+        key_input = data.get('key')
+
+        if not message:
+            return jsonify({"detail": "Message is required"}), 400
+
         # Use provided key or generate a new one
-        if request.key:
+        if key_input:
             try:
-                key = request.key.encode()
-                # Validate the key by trying to create a Fernet instance
+                key = key_input.encode()
                 fernet = Fernet(key)
             except Exception:
-                raise HTTPException(status_code=400, detail="Invalid encryption key format")
+                return jsonify({"detail": "Invalid encryption key format"}), 400
         else:
             key = Fernet.generate_key()
             fernet = Fernet(key)
 
         # Encrypt the message
-        encrypted_message = fernet.encrypt(request.message.encode())
+        encrypted_message = fernet.encrypt(message.encode())
 
-        return EncryptResponse(
-            encrypted_message=encrypted_message.decode(),
-            key=key.decode()
-        )
-    except HTTPException:
-        raise
+        return jsonify({
+            "encrypted_message": encrypted_message.decode(),
+            "key": key.decode()
+        })
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error encrypting message: {str(e)}")
+        return jsonify({"detail": f"Error encrypting message: {str(e)}"}), 500
 
-@app.post("/decrypt", response_model=DecryptResponse)
-async def decrypt_message(request: DecryptRequest):
-    """Decrypt a message using Fernet decryption"""
+@app.route('/decrypt', methods=['POST'])
+def decrypt_message():
     try:
-        # Validate and create Fernet instance with provided key
+        data = request.get_json()
+        encrypted_message = data.get('encrypted_message')
+        key_input = data.get('key')
+
+        if not encrypted_message or not key_input:
+            return jsonify({"detail": "Both encrypted_message and key are required"}), 400
+
+        # Validate and create Fernet instance
         try:
-            key = request.key.encode()
+            key = key_input.encode()
             fernet = Fernet(key)
         except Exception:
-            raise HTTPException(status_code=400, detail="Invalid encryption key format")
+            return jsonify({"detail": "Invalid encryption key format"}), 400
 
         # Decrypt the message
         try:
-            encrypted_bytes = request.encrypted_message.encode()
+            encrypted_bytes = encrypted_message.encode()
             decrypted_message = fernet.decrypt(encrypted_bytes)
-            return DecryptResponse(decrypted_message=decrypted_message.decode())
+            return jsonify({"decrypted_message": decrypted_message.decode()})
         except Exception:
-            raise HTTPException(status_code=400, detail="Failed to decrypt message. Check your key and encrypted message.")
+            return jsonify({"detail": "Failed to decrypt message. Check your key and encrypted message."}), 400
 
-    except HTTPException:
-        raise
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error decrypting message: {str(e)}")
+        return jsonify({"detail": f"Error decrypting message: {str(e)}"}), 500
 
-# Vercel handler
-handler = Mangum(app)
+# For local development
+if __name__ == '__main__':
+    app.run(debug=True)
