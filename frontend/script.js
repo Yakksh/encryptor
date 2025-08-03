@@ -99,6 +99,21 @@ function copyToClipboard(elementId) {
     });
 }
 
+function togglePasswordVisibility(inputId) {
+    const input = document.getElementById(inputId);
+    const button = input.nextElementSibling;
+
+    if (input.type === 'password') {
+        input.type = 'text';
+        button.textContent = '🙈'; // Hide icon
+        button.title = 'Hide Key';
+    } else {
+        input.type = 'password';
+        button.textContent = '👁️'; // Show icon
+        button.title = 'Show Key';
+    }
+}
+
 // Enhanced error handling for API responses
 async function handleApiResponse(response, operation) {
     if (!response.ok) {
