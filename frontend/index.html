@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fernet Encryptor</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🔐 Fernet Encryptor</h1>
+            <p>Secure message encryption and decryption using Python's Fernet encryption</p>
+        </header>
+
+        <div class="api-status">
+            <span id="api-status-indicator" class="status-indicator offline"></span>
+            <span id="api-status-text">Checking API status...</span>
+        </div>
+
+        <div class="tabs">
+            <button class="tab-button active" onclick="showTab('encrypt')">Encrypt Message</button>
+            <button class="tab-button" onclick="showTab('decrypt')">Decrypt Message</button>
+            <button class="tab-button" onclick="showTab('generate-key')">Generate Key</button>
+        </div>
+
+        <!-- Generate Key Tab -->
+        <div id="generate-key" class="tab-content">
+            <div class="card">
+                <h3>Generate Encryption Key</h3>
+                <p>Generate a new Fernet encryption key for securing your messages.</p>
+                <button onclick="generateKey()" class="btn btn-primary">Generate New Key</button>
+                <div id="generated-key-result" class="result-box" style="display: none;">
+                    <h4>Generated Key:</h4>
+                    <div class="key-display">
+                        <span id="generated-key-value"></span>
+                        <button onclick="copyToClipboard('generated-key-value')" class="btn btn-small">Copy</button>
+                    </div>
+                    <p class="warning">⚠️ Save this key securely! You'll need it to decrypt your messages.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Encrypt Tab -->
+        <div id="encrypt" class="tab-content active">
+            <div class="card">
+                <h3>Encrypt Message</h3>
+                <div class="form-group">
+                    <label for="encrypt-message">Message to encrypt:</label>
+                    <textarea id="encrypt-message" placeholder="Enter your message here..." rows="4"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="encrypt-key">Encryption key (optional - leave empty to generate new):</label>
+                    <input type="text" id="encrypt-key" placeholder="Enter existing key or leave empty for new key">
+                </div>
+                <button onclick="encryptMessage()" class="btn btn-primary">Encrypt Message</button>
+                <div id="encrypt-result" class="result-box" style="display: none;">
+                    <h4>Encryption Result:</h4>
+                    <div class="result-item">
+                        <label>Encrypted Message:</label>
+                        <div class="result-value">
+                            <span id="encrypted-message-value"></span>
+                            <button onclick="copyToClipboard('encrypted-message-value')" class="btn btn-small">Copy</button>
+                        </div>
+                    </div>
+                    <div class="result-item">
+                        <label>Encryption Key:</label>
+                        <div class="result-value">
+                            <span id="encryption-key-value"></span>
+                            <button onclick="copyToClipboard('encryption-key-value')" class="btn btn-small">Copy</button>
+                        </div>
+                    </div>
+                    <p class="warning">⚠️ Save both the encrypted message and key securely!</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Decrypt Tab -->
+        <div id="decrypt" class="tab-content">
+            <div class="card">
+                <h3>Decrypt Message</h3>
+                <div class="form-group">
+                    <label for="decrypt-message">Encrypted message:</label>
+                    <textarea id="decrypt-message" placeholder="Enter encrypted message here..." rows="4"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="decrypt-key">Decryption key:</label>
+                    <input type="text" id="decrypt-key" placeholder="Enter your encryption key">
+                </div>
+                <button onclick="decryptMessage()" class="btn btn-primary">Decrypt Message</button>
+                <div id="decrypt-result" class="result-box" style="display: none;">
+                    <h4>Decrypted Message:</h4>
+                    <div class="decrypted-message">
+                        <span id="decrypted-message-value"></span>
+                        <button onclick="copyToClipboard('decrypted-message-value')" class="btn btn-small">Copy</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="loading" class="loading" style="display: none;">
+            <div class="spinner"></div>
+            <p>Processing...</p>
+        </div>
+
+        <div id="error-message" class="error-message" style="display: none;"></div>
+    </div>
+
+    <footer>
+        <p>Built with Python's Fernet encryption | <a href="https://github.com" target="_blank">View on GitHub</a></p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

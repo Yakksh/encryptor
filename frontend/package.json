@@ -1,0 +1,23 @@
+{
+  "name": "fernet-encryptor-frontend",
+  "version": "1.0.0",
+  "description": "Frontend for Fernet Encryptor - secure message encryption and decryption",
+  "main": "script.js",
+  "scripts": {
+    "serve": "python -m http.server 3000",
+    "serve-node": "npx serve .",
+    "test": "echo \"No frontend tests specified\" && exit 0"
+  },
+  "keywords": [
+    "encryption",
+    "fernet",
+    "cryptography",
+    "frontend",
+    "github-pages"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "serve": "^14.2.1"
+  }
+}
