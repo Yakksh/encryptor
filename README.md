@@ -1,6 +1,6 @@
 # Fernet Encryptor
 
-A secure message encryption and decryption application using Python's `cryptography` library with Fernet encryption. The project consists of a Python FastAPI backend and a static HTML/CSS/JavaScript frontend that can be deployed on GitHub Pages.
+A secure message encryption and decryption application using Python's `cryptography` library with Fernet encryption. The project consists of a Python Flask API and a static HTML/CSS/JavaScript frontend that can be deployed on GitHub Pages.
 
 ## Features
 
@@ -16,14 +16,15 @@ A secure message encryption and decryption application using Python's `cryptogra
 
 ```
 fernet-encryptor/
-├── backend/
-│   └── main.py                 # FastAPI backend application
+├── api/
+│   └── index.py               # Flask API application
 ├── frontend/
 │   ├── index.html             # Main web interface
 │   ├── styles.css             # Styling
 │   └── script.js              # Frontend JavaScript
 ├── requirements.txt           # Python dependencies
 ├── vercel.json               # Vercel deployment configuration
+├── run_local.py              # Local development server
 ├── .gitignore                # Git ignore file
 └── README.md                 # This file
 ```
@@ -37,21 +38,18 @@ fernet-encryptor/
    pip install -r requirements.txt
    ```
 
-2. **Run the FastAPI server:**
+2. **Run the Flask API server:**
    ```bash
-   cd backend
-   python main.py
-   ```
-
-   Or using uvicorn directly:
-   ```bash
-   uvicorn backend.main:app --reload --host 0.0.0.0 --port 8000
+   python -m flask --app api.index:app run --host 0.0.0.0 --port 8000 --debug
    ```
 
    The API will be available at `http://localhost:8000`
 
-3. **API Documentation:**
-   Visit `http://localhost:8000/docs` for interactive API documentation
+3. **Or use the convenience script:**
+   ```bash
+   python run_local.py
+   ```
+   This will start both API and frontend servers automatically.
 
 ### Frontend Setup
 
@@ -190,7 +188,7 @@ Decrypt a message
 
 ## Technologies Used
 
-- **Backend**: Python, FastAPI, cryptography library
+- **Backend**: Python, Flask, cryptography library
 - **Frontend**: HTML5, CSS3, JavaScript (Vanilla)
 - **Deployment**: Vercel (backend), GitHub Pages (frontend)
 - **Encryption**: Fernet symmetric encryption
