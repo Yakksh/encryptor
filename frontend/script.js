@@ -99,6 +99,33 @@ function copyToClipboard(elementId) {
     });
 }
 
+// Enhanced error handling for API responses
+async function handleApiResponse(response, operation) {
+    if (!response.ok) {
+        let errorMessage = `HTTP error! status: ${response.status}`;
+
+        try {
+            const errorData = await response.json();
+            errorMessage = errorData.detail || errorMessage;
+
+            // Specific handling for different error types
+            if (response.status === 429) {
+                errorMessage = `⏱️ ${errorMessage}\n\nPlease wait a moment before trying again.`;
+            } else if (response.status === 403) {
+                errorMessage = `🚫 ${errorMessage}\n\nAccess denied. Please use the official website.`;
+            } else if (response.status >= 500) {
+                errorMessage = `⚠️ Server error: ${errorMessage}\n\nPlease try again later.`;
+            }
+        } catch (parseError) {
+            // If we can't parse the error response, use the default message
+        }
+
+        throw new Error(errorMessage);
+    }
+
+    return await response.json();
+}
+
 // API Functions
 async function generateKey() {
     showLoading();
@@ -112,11 +139,7 @@ async function generateKey() {
             },
         });
 
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const data = await response.json();
+        const data = await handleApiResponse(response, 'generating key');
 
         document.getElementById('generated-key-value').textContent = data.key;
         document.getElementById('generated-key-result').style.display = 'block';
@@ -157,12 +180,7 @@ async function encryptMessage() {
             body: JSON.stringify(requestBody)
         });
 
-        if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.detail || `HTTP error! status: ${response.status}`);
-        }
-
-        const data = await response.json();
+        const data = await handleApiResponse(response, 'encrypting message');
 
         document.getElementById('encrypted-message-value').textContent = data.encrypted_message;
         document.getElementById('encryption-key-value').textContent = data.key;
@@ -204,12 +222,7 @@ async function decryptMessage() {
             })
         });
 
-        if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.detail || `HTTP error! status: ${response.status}`);
-        }
-
-        const data = await response.json();
+        const data = await handleApiResponse(response, 'decrypting message');
 
         document.getElementById('decrypted-message-value').textContent = data.decrypted_message;
         document.getElementById('decrypt-result').style.display = 'block';
