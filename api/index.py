@@ -2,6 +2,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from cryptography.fernet import Fernet
+from mangum import Mangum
 import base64
 import os
 from typing import Optional
@@ -63,10 +64,10 @@ async def encrypt_message(request: EncryptRequest):
         else:
             key = Fernet.generate_key()
             fernet = Fernet(key)
-        
+
         # Encrypt the message
         encrypted_message = fernet.encrypt(request.message.encode())
-        
+
         return EncryptResponse(
             encrypted_message=encrypted_message.decode(),
             key=key.decode()
@@ -86,7 +87,7 @@ async def decrypt_message(request: DecryptRequest):
             fernet = Fernet(key)
         except Exception:
             raise HTTPException(status_code=400, detail="Invalid encryption key format")
-        
+
         # Decrypt the message
         try:
             encrypted_bytes = request.encrypted_message.encode()
@@ -94,11 +95,11 @@ async def decrypt_message(request: DecryptRequest):
             return DecryptResponse(decrypted_message=decrypted_message.decode())
         except Exception:
             raise HTTPException(status_code=400, detail="Failed to decrypt message. Check your key and encrypted message.")
-    
+
     except HTTPException:
         raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error decrypting message: {str(e)}")
 
-# Export app for Vercel
-handler = app
+# Vercel handler
+handler = Mangum(app)
