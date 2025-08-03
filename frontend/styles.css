@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Poppins:wght@300;400;500;600;700&family=Creepster&display=swap');
+
 * {
     margin: 0;
     padding: 0;
@@ -5,7 +7,7 @@
 }
 
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Poppins', sans-serif;
     line-height: 1.6;
     color: #e0e0e0;
     background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
@@ -25,14 +27,19 @@ header {
 }
 
 header h1 {
+    font-family: 'Orbitron', monospace;
     font-size: 2.5rem;
+    font-weight: 700;
     margin-bottom: 10px;
     text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    letter-spacing: 1px;
 }
 
 header p {
     font-size: 1.1rem;
     opacity: 0.9;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 400;
 }
 
 .api-status {
@@ -45,6 +52,8 @@ header p {
     background: rgba(255, 255, 255, 0.05);
     border-radius: 8px;
     color: #e0e0e0;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 500;
 }
 
 .status-indicator {
@@ -80,6 +89,8 @@ header p {
     cursor: pointer;
     transition: background-color 0.3s;
     font-size: 1rem;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 500;
 }
 
 .tab-button:hover {
@@ -107,9 +118,12 @@ header p {
 }
 
 .card h3 {
+    font-family: 'Orbitron', monospace;
+    font-weight: 600;
     margin-bottom: 20px;
     color: #e0e0e0;
     font-size: 1.5rem;
+    letter-spacing: 0.5px;
 }
 
 .form-group {
@@ -119,8 +133,10 @@ header p {
 .form-group label {
     display: block;
     margin-bottom: 8px;
-    font-weight: bold;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
     color: #b0b0b0;
+    letter-spacing: 0.2px;
 }
 
 .form-group input,
@@ -181,10 +197,12 @@ header p {
     border-radius: 8px;
     cursor: pointer;
     font-size: 1rem;
-    font-weight: bold;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
     transition: all 0.3s;
     text-decoration: none;
     display: inline-block;
+    letter-spacing: 0.3px;
 }
 
 .btn-primary {
@@ -219,8 +237,11 @@ header p {
 }
 
 .result-box h4 {
+    font-family: 'Orbitron', monospace;
+    font-weight: 600;
     margin-bottom: 15px;
     color: #e0e0e0;
+    letter-spacing: 0.5px;
 }
 
 .result-item {
@@ -230,8 +251,10 @@ header p {
 .result-item label {
     display: block;
     margin-bottom: 5px;
-    font-weight: bold;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
     color: #b0b0b0;
+    letter-spacing: 0.2px;
 }
 
 .result-value {
@@ -295,6 +318,9 @@ header p {
     border-radius: 4px;
     color: #f4d03f;
     font-size: 0.9rem;
+    font-family: 'Creepster', cursive;
+    letter-spacing: 1px;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
 }
 
 .loading {
@@ -304,6 +330,8 @@ header p {
     border-radius: 10px;
     margin-top: 20px;
     color: #e0e0e0;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 500;
 }
 
 .spinner {
@@ -329,7 +357,10 @@ header p {
     margin-top: 20px;
     border-left: 4px solid #e74c3c;
     white-space: pre-line; /* Allow line breaks in error messages */
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-family: 'Creepster', cursive;
+    letter-spacing: 0.5px;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+    font-size: 0.9rem;
 }
 
 footer {
@@ -337,6 +368,8 @@ footer {
     margin-top: 40px;
     color: #b0b0b0;
     opacity: 0.8;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 400;
 }
 
 footer a {
@@ -356,6 +389,7 @@ footer a:hover {
 
     header h1 {
         font-size: 2rem;
+        letter-spacing: 0.5px;
     }
 
     .tabs {
@@ -380,5 +414,38 @@ footer a:hover {
     .btn-small {
         margin-left: 0;
         margin-top: 10px;
+    }
+}
+
+/* Creepster accents - used sparingly for mysterious encryption vibe */
+.creepy-accent {
+    font-family: 'Creepster', cursive;
+    letter-spacing: 1px;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+    color: #f4d03f;
+}
+
+/* Add mysterious glow effect to main title emoji */
+header h1:first-letter {
+    font-family: 'Creepster', cursive;
+    font-size: 1.2em;
+    text-shadow: 0 0 10px #7c8aed, 1px 1px 2px rgba(0,0,0,0.5);
+}
+
+/* Spooky offline status - when API is down */
+.status-indicator.offline ~ #api-status-text {
+    font-family: 'Creepster', cursive;
+    letter-spacing: 0.5px;
+    color: #f44336;
+    text-shadow: 0 0 5px #f44336, 1px 1px 2px rgba(0,0,0,0.5);
+    animation: pulse-glow 2s ease-in-out infinite alternate;
+}
+
+@keyframes pulse-glow {
+    from {
+        text-shadow: 0 0 5px #f44336, 1px 1px 2px rgba(0,0,0,0.5);
+    }
+    to {
+        text-shadow: 0 0 10px #f44336, 0 0 15px #f44336, 1px 1px 2px rgba(0,0,0,0.5);
     }
 }
